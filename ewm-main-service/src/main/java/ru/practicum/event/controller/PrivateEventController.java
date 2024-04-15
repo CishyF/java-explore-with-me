@@ -63,7 +63,7 @@ public class PrivateEventController {
      * @param userId id текущего пользователя
      * @param eventId id события
      * Получение информации о запросах на участие в событии текущего пользователя
-     * В случае, если по заданным фильтрам не найдено ни одной заявки, возвращает пустой список                 
+     * В случае, если по заданным фильтрам не найдено ни одной заявки, возвращает пустой список
      */
     @GetMapping("/{eventId}/requests")
     public Collection<ParticipationRequestDtoResponse> getParticipations(@PathVariable long userId, @PathVariable long eventId) {
