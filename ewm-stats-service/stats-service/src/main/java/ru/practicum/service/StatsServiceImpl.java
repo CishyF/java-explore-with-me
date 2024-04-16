@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.dto.EndpointHitDtoRequest;
 import ru.practicum.dto.ViewStatsDtoResponse;
 import ru.practicum.entity.EndpointHit;
+import ru.practicum.exception.IncorrectRequestException;
 import ru.practicum.mapping.StatsMapper;
 import ru.practicum.repository.StatsRepository;
 
@@ -29,6 +30,9 @@ public class StatsServiceImpl implements StatsService {
 
     @Override
     public Collection<ViewStatsDtoResponse> findViewStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
+        if (start != null && end != null && start.isAfter(end)) {
+            throw new IncorrectRequestException("The specified date range is incorrect");
+        }
         if (uris == null || uris.isEmpty()) {
             return findViewStatsOfAllUris(start, end, unique);
         } else if (unique) {

@@ -10,6 +10,7 @@ import static ru.practicum.util.Constants.DATE_TIME_PATTERN;
 
 @Getter
 @Setter
+@Builder
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
