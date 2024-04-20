@@ -4,12 +4,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.comment.dto.CommentDtoRequest;
+import ru.practicum.comment.dto.CommentDtoResponse;
+import ru.practicum.comment.mapping.CommentMapper;
+import ru.practicum.comment.service.CommentService;
 import ru.practicum.event.dto.response.EventFullDtoResponse;
 import ru.practicum.event.dto.response.EventShortDtoResponse;
 import ru.practicum.event.dto.response.UpdateEventParticipationsDtoResponse;
 import ru.practicum.event.dto.create.CreateEventDtoRequest;
 import ru.practicum.event.dto.update.PrivateUpdateEventDtoRequest;
 import ru.practicum.event.dto.update.UpdateEventParticipationsDtoRequest;
+import ru.practicum.event.entity.Event;
 import ru.practicum.event.service.EventService;
 import ru.practicum.participation.dto.ParticipationRequestDtoResponse;
 import ru.practicum.participation.mapping.ParticipationRequestMapper;
@@ -25,7 +30,9 @@ import java.util.stream.Collectors;
 public class PrivateEventController {
 
     private final ParticipationRequestMapper participationRequestMapper;
+    private final CommentMapper commentMapper;
     private final EventService eventService;
+    private final CommentService commentService;
 
     /**
      * @param userId id текущего пользователя
@@ -76,6 +83,20 @@ public class PrivateEventController {
     }
 
     /**
+     * @param userId id пользователя
+     * @param eventId id события
+     * Получение всех комментариев на событие конкретного пользователя
+     */
+    @GetMapping("/{eventId}/comments")
+    public Collection<CommentDtoResponse> getComments(@PathVariable long userId, @PathVariable long eventId) {
+        log.info("Пришел GET-запрос main-service/users/{userId={}}/events/{eventId={}}/comments без тела", userId, eventId);
+        Event event = eventService.findPublishedEvent(eventId);
+        Collection<CommentDtoResponse> dtos = commentMapper.mapCommentsToDtoResponses(commentService.findComments(event));
+        log.info("Ответ на GET-запрос main-service/users/{userId={}}/events/{eventId={}}/comments с телом={}", userId, eventId, dtos);
+        return dtos;
+    }
+
+    /**
      * @param userId id текущего пользователя
      * @param dto данные добавляемого события
      * Добавление нового события
@@ -88,6 +109,24 @@ public class PrivateEventController {
         EventFullDtoResponse savedDto = eventService.makeEventFullDtoResponse(eventService.createEvent(userId, dto));
         log.info("Ответ на POST-запрос main-service/users/{userId={}}/events с телом={}", userId, savedDto);
         return savedDto;
+    }
+
+    /**
+     * @param userId id пользователя
+     * @param eventId id события
+     * @param dto данные комментария
+     * Создание комментария у события
+     */
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/{eventId}/comments")
+    public EventFullDtoResponse createComment(@PathVariable long userId,
+              @PathVariable long eventId, @Valid @RequestBody CommentDtoRequest dto) {
+        log.info("Пришел POST-запрос main-service/users/{userId={}}/events/{eventId={}}/comments с телом={}", userId, eventId, dto);
+        EventFullDtoResponse eventDto = eventService.makeEventFullDtoResponse(
+                eventService.createCommentAtEvent(eventId, userId, dto)
+        );
+        log.info("Ответ на POST-запрос main-service/users/{userId={}}/events/{eventId={}}/comments с телом={}", userId, eventId, eventDto);
+        return eventDto;
     }
 
     /**
