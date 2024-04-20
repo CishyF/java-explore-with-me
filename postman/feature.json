@@ -659,7 +659,7 @@
 								"type": "text"
 							},
 							{
-								"key": "Type",
+								"key": "Content-Type",
 								"value": "application/json",
 								"type": "text"
 							}
@@ -850,7 +850,18 @@
 					],
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/users/:userId/events/:eventId/comments",
 							"host": [
