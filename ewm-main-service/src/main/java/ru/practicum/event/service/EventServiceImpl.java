@@ -6,6 +6,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.category.entity.Category;
 import ru.practicum.category.service.CategoryService;
+import ru.practicum.comment.dto.CommentDtoRequest;
+import ru.practicum.comment.dto.CommentDtoResponse;
+import ru.practicum.comment.mapping.CommentMapper;
+import ru.practicum.comment.service.CommentService;
 import ru.practicum.event.controller.SortType;
 import ru.practicum.event.dto.response.EventFullDtoResponse;
 import ru.practicum.event.dto.response.EventShortDtoResponse;
@@ -45,9 +49,11 @@ public class EventServiceImpl implements EventService {
     private final LocationMapper locationMapper;
     private final EventMapper eventMapper;
     private final ParticipationRequestMapper participationRequestMapper;
+    private final CommentMapper commentMapper;
     private final EventPatchUpdater eventPatchUpdater;
     private final UserService userService;
     private final CategoryService categoryService;
+    private final CommentService commentService;
     private final StatsProxy statsProxy;
 
     @Override
@@ -163,6 +169,13 @@ public class EventServiceImpl implements EventService {
         if (LocalDateTime.now().plusHours(2L).isAfter(dto.getEventDate())) {
             throw new EventDateIsInvalidException("Field: eventDate. Error: должно содержать дату не менее, чем за 2 часа до мероприятия.");
         }
+    }
+
+    @Override
+    public Event createCommentAtEvent(long eventId, long userId, CommentDtoRequest dto) {
+        Event event = findEvent(eventId);
+        commentService.createComment(event, userId, dto);
+        return event;
     }
 
     @Override
@@ -299,9 +312,10 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDtoResponse makeEventFullDtoResponse(Event event) {
+        List<CommentDtoResponse> commentDtos = commentMapper.mapCommentsToDtoResponses(commentService.findComments(event));
         long confirmedRequests = participationRequestRepository.countByStatusAndEvent(ParticipationRequestStatus.CONFIRMED, event);
         long views = statsProxy.getViews(event);
-        return eventMapper.mapEventToFullDtoResponse(confirmedRequests, views, event);
+        return eventMapper.mapEventToFullDtoResponse(commentDtos, confirmedRequests, views, event);
     }
 
     @Override
