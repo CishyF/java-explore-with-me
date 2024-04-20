@@ -664,6 +664,15 @@
 								"type": "text"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{baseUrl}}/users/:userId/comments/:commentId",
 							"host": [
@@ -840,7 +849,7 @@
 									"\r",
 									"pm.test(\"Комментарии должны быть не пусты и соответствовать созданным\", function () {\r",
 									"pm.expect(target).not.empty;\r",
-									"pm.expect(target[0].id).equal(commentId)\r",
+									"pm.expect(target[0].id.toString()).equal(commentId.toString())\r",
 									"});"
 								],
 								"type": "text/javascript",
