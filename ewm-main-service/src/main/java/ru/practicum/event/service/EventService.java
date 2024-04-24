@@ -1,5 +1,6 @@
 package ru.practicum.event.service;
 
+import ru.practicum.comment.dto.CommentDtoRequest;
 import ru.practicum.event.controller.SortType;
 import ru.practicum.event.dto.response.EventFullDtoResponse;
 import ru.practicum.event.dto.response.EventShortDtoResponse;
@@ -38,6 +39,8 @@ public interface EventService {
     Collection<ParticipationRequest> findParticipations(long userId, long eventId);
 
     Event createEvent(long userId, CreateEventDtoRequest dto);
+
+    Event createCommentAtEvent(long eventId, long userId, CommentDtoRequest dto);
 
     Event updateEvent(long userId, long eventId, PrivateUpdateEventDtoRequest dto);
 

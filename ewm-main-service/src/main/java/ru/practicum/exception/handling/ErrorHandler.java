@@ -51,7 +51,7 @@ public class ErrorHandler {
             EventIsNotPublishedException.class, ParticipationInOwnEventException.class,
             AccessDeniedException.class, CategoryIsNotEmptyException.class
     })
-    public ErrorResponse handleConstraintViolation(RuntimeException e) {
+    public ErrorResponse handleConflict(RuntimeException e) {
         log.error("Обработка исключения с кодом 409", e);
         return ErrorResponse.builder()
                 .status(HttpStatus.CONFLICT)

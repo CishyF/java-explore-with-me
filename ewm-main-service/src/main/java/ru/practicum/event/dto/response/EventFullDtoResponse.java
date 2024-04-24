@@ -3,12 +3,14 @@ package ru.practicum.event.dto.response;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import ru.practicum.category.dto.CategoryDtoResponse;
+import ru.practicum.comment.dto.CommentDtoResponse;
 import ru.practicum.event.entity.EventState;
 import ru.practicum.event.location.dto.LocationDto;
 import ru.practicum.user.dto.UserShortDtoResponse;
 import ru.practicum.util.Constants;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -37,4 +39,5 @@ public class EventFullDtoResponse {
     private boolean requestModeration;
     private EventState state;
     private long views;
+    private List<CommentDtoResponse> comments;
 }

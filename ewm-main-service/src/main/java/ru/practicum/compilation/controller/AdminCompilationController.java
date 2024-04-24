@@ -35,7 +35,7 @@ public class AdminCompilationController {
     /**
      * @param compilationId id подборки
      * @param dto данные для обновления подборки
-     * Обновить информацию о подборке
+     * Обновление информации о подборке
      */
     @PatchMapping("/{compilationId}")
     public CompilationDtoResponse updateCompilation(@PathVariable long compilationId, @Valid @RequestBody UpdateCompilationDtoRequest dto) {
